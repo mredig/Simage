@@ -27,9 +27,9 @@ def getImagesFiles(directory):
 
 	return images
 
-def getHash(filename, directory):
+def getHash(filename, directory, hashSize):
 	image = Image.open(f"{directory}/{filename}")
-	hash = imagehash.phash(image, hash_size=8)
+	hash = imagehash.phash(image, hash_size=hashSize)
 	return hash
 
 
@@ -38,16 +38,18 @@ def main():
 
 	parser.add_argument('--input', '-i', required=True, help="The directory with images.")
 	parser.add_argument('--output', '-o', help="destination json file")
+	parser.add_argument('--hashSize', '-s', default=8, type=int, help="hash size (default 8)")
 
 	args = parser.parse_args()
 
 	directory = args.input
 	output = args.output
+	hashSize = args.hashSize
 	images = getImagesFiles(directory)
 	
 	imageMap = dict()
 	for image in images:
-		hash = getHash(image, directory)
+		hash = getHash(image, directory, hashSize)
 		imageMap[image] = str(hash)
 		print(f"{image}: {hash}")
 

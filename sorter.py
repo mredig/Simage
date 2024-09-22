@@ -5,16 +5,9 @@ import imagehash
 from argparse import ArgumentParser
 from glob import glob
 import os
-
 import json
 
-imageExtensions = set()
-imageExtensions.add("jpg")
-imageExtensions.add("jpeg2")
-imageExtensions.add("png")
-
 class ImageHash:
-
 	def __init__(self, image, hash):
 		self.image = image
 		if isinstance(hash, str):
@@ -30,23 +23,6 @@ class ImageHash:
 			raise "foo"
 		return self.hash - other.hash
 
-# def getImagesFiles(directory):
-# 	files = glob("*", root_dir=directory)
-
-# 	images = list()
-# 	for file in files:
-# 		fileLC = file.lower()
-# 		for extension in imageExtensions:
-# 			if extension in fileLC:
-# 				images.append(file)
-# 				break
-
-# 	return images
-
-# def getHash(filename, directory):
-# 	image = Image.open(f"{directory}/{filename}")
-# 	hash = imagehash.phash(image, hash_size=8)
-# 	return hash
 
 def convertToImageHashes(hashes):
 	imageHashes = dict()
@@ -78,10 +54,6 @@ def analyze(imageHashes, threshold):
 		grouped[imageHash.hash] = [imageHash]
 
 	return grouped
-	# for group in grouped:
-	# 	print(grouped[group])
-	# count = len(grouped)
-	# print(f"found {count} groups")
 
 def commit(directory, isSymlink, groups):
 	groupSubDir = f"{directory}/groups"
@@ -99,8 +71,8 @@ def commit(directory, isSymlink, groups):
 			if isSymlink:
 				os.symlink(oldPath, newPath)
 			else:
-				# os.rename(oldPath, newPath)
-				print("disabled rename")
+				os.rename(oldPath, newPath)
+				# print("disabled rename")
 
 def main():
 	parser = ArgumentParser(description="Take a json file with pHashes and sort into similar groups.")
@@ -134,20 +106,5 @@ def main():
 		imageHashes = groups[group]
 		images = [imageHash.image for imageHash in imageHashes]
 		print(f"{group}: {images}")
-
-
-	# directory = args.input
-	# output = args.output
-	# images = getImagesFiles(directory)
-	
-	# imageMap = dict()
-	# for image in images:
-	# 	hash = getHash(image, directory)
-	# 	imageMap[image] = str(hash)
-	# 	print(f"{image}: {hash}")
-
-	# newjson = json.dumps(imageMap, indent="\t")
-	# with open(output, 'w') as f:
-	# 	f.write(newjson)
 
 main()

@@ -56,7 +56,7 @@ def analyze(imageHashes, threshold):
 	return grouped
 
 def commit(directory, isSymlink, groups):
-	groupSubDir = f"{directory}/groups"
+	groupSubDir = f"{directory}/groups({threshold})"
 	os.mkdir(groupSubDir)
 	for group in groups:
 		imageHashes = groups[group]

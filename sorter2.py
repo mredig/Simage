@@ -128,4 +128,6 @@ def main():
 		images = [imageHash.image for imageHash in imageHashes]
 		print(f"{group}: {images}")
 
+	print(f"total {len(groups)} group(s)")
+
 main()

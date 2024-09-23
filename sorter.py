@@ -55,9 +55,11 @@ def analyze(imageHashes, threshold):
 
 	return grouped
 
-def commit(directory, isSymlink, groups):
+def commit(directory, isSymlink, groups, threshold):
 	groupSubDir = f"{directory}/groups({threshold})"
+	noMatchDir = f"{groupSubDir}/noMatch"
 	os.mkdir(groupSubDir)
+	os.mkdir(noMatchDir)
 	for group in groups:
 		imageHashes = groups[group]
 		groupName = str(group)
@@ -67,6 +69,10 @@ def commit(directory, isSymlink, groups):
 		for imageHash in imageHashes:
 			oldPath = f"{directory}/{imageHash.image}"
 			newPath = f"{newGroupPath}/{imageHash.image}"
+
+			if len(imageHashes) == 1:
+				newPath = f"{noMatchDir}/{imageHash.image}"
+				os.rmdir(newGroupPath)
 
 			if isSymlink:
 				os.symlink(oldPath, newPath)
@@ -97,10 +103,10 @@ def main():
 	groups = analyze(imageHashes, threshold)
 
 	if args.linkInDirectory is not None:
-		commit(args.linkInDirectory, True, groups)
+		commit(args.linkInDirectory, True, groups, threshold)
 
 	if args.commitInDirectory is not None:
-		commit(args.commitInDirectory, False, groups)
+		commit(args.commitInDirectory, False, groups, threshold)
 
 	for group in groups:
 		imageHashes = groups[group]
